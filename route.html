@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Lengkap Jaringan Cisco Packet Tracer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b1e33;
+      color: #e0e6ed;
+      overflow-x: hidden;
+    }
+    header {
+      text-align: center;
+      padding: 50px 20px;
+      background: linear-gradient(90deg, #0f2a47, #123a5e);
+      color: #fff;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .card {
+      background-color: #132c46;
+      border-radius: 14px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      margin-bottom: 50px;
+      padding: 40px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s ease;
+    }
+    .card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    h2 {
+      color: #4ea3ff;
+      border-bottom: 2px solid #4ea3ff;
+      padding-bottom: 8px;
+    }
+    img.topology {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background-color: #0e243d;
+      border-radius: 10px;
+      object-fit: cover;
+      margin: 20px 0;
+    }
+    pre {
+      background-color: #0a1b2f;
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      color: #9fd1ff;
+    }
+    button.copy-btn {
+      background-color: #1c65b7;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button.copy-btn:hover {
+      background-color: #3182ce;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Panduan Lengkap Konfigurasi Jaringan di Cisco Packet Tracer</h1>
+    <p>Belajar memahami dasar hingga lanjutan konfigurasi jaringan menggunakan CLI dengan pendekatan praktis</p>
+  </header>
+
+  <div class="container">
+
+    <!-- MATERI 1: JARINGAN SEDERHANA -->
+    <div class="card fade">
+      <h2>1. Jaringan Sederhana (2 PC 1 Router)</h2>
+      <p><strong>Konsep:</strong> Jaringan sederhana ini membantu memahami komunikasi dasar antar perangkat menggunakan IP dan gateway. Dua PC dihubungkan ke satu router agar dapat saling berkomunikasi lintas jaringan.</p>
+      <img src="1.png" alt="Topologi Jaringan Sederhana" class="topology">
+
+      <h3>Langkah-Langkah Konfigurasi:</h3>
+      <ol>
+        <li><strong>Persiapan perangkat:</strong> Tambahkan 2 PC dan 1 router ke lembar kerja Packet Tracer.</li>
+        <li><strong>Koneksi antar perangkat:</strong> Gunakan kabel <em>Straight-Through</em> dari setiap PC ke port FastEthernet router.</li>
+        <li><strong>Konfigurasi interface router:</strong> Masuk ke router via CLI, aktifkan setiap interface dan beri IP sesuai jaringan masing-masing.</li>
+      </ol>
+
+      <pre id="cli1">
+Router> enable
+Router# configure terminal
+Router(config)# interface fastethernet0/0
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+Router(config-if)# no shutdown
+Router(config)# interface fastethernet0/1
+Router(config-if)# ip address 192.168.2.1 255.255.255.0
+Router(config-if)# no shutdown
+Router(config)# exit
+      </pre>
+      <button class="copy-btn" onclick="copyToClipboard('cli1')">Copy CLI</button>
+
+      <p><strong>Konfigurasi IP di PC:</strong></p>
+      <ul>
+        <li><strong>PC1:</strong> IP 192.168.1.2, Mask 255.255.255.0, Gateway 192.168.1.1</li>
+        <li><strong>PC2:</strong> IP 192.168.2.2, Mask 255.255.255.0, Gateway 192.168.2.1</li>
+      </ul>
+
+      <h3>Uji Koneksi:</h3>
+      <p>Buka Command Prompt di PC1, ketik <code>ping 192.168.2.2</code>. Jika semua konfigurasi benar, paket akan berhasil terkirim dan muncul balasan (reply).</p>
+
+      <h3>Kesimpulan:</h3>
+      <p>Pada konfigurasi ini, dua PC dapat saling berkomunikasi melalui router berkat IP Address dan gateway yang tepat. Pemahaman dasar ini penting sebelum melangkah ke routing dan VLAN yang lebih kompleks.</p>
+    </div>
+
+    <!-- MATERI 2: ROUTING STATIC -->
+    <div class="card fade">
+      <h2>2. Routing Static</h2>
+      <p><strong>Konsep:</strong> Routing statis memungkinkan admin menentukan jalur antar jaringan secara manual. Ini cocok untuk jaringan kecil yang tidak sering berubah.</p>
+      <img src="3.png" alt="Topologi Routing Static" class="topology">
+
+      <h3>Langkah-Langkah Konfigurasi:</h3>
+      <ol>
+        <li><strong>Persiapan perangkat:</strong> Gunakan dua router, masing-masing terhubung ke satu PC.</li>
+        <li><strong>Konfigurasi IP:</strong> Atur IP di setiap interface yang menghubungkan router dan PC.</li>
+        <li><strong>Buat rute statis:</strong> Tambahkan rute di tiap router agar tahu jalur menuju jaringan lain.</li>
+      </ol>
+
+      <pre id="cli2">
+Router0> enable
+Router0# configure terminal
+Router0(config)# interface fastethernet0/0
+Router0(config-if)# ip address 192.168.1.1 255.255.255.0
+Router0(config-if)# no shutdown
+Router0(config)# interface serial0/0/0
+Router0(config-if)# ip address 10.0.0.1 255.255.255.252
+Router0(config-if)# no shutdown
+Router0(config)# ip route 192.168.2.0 255.255.255.0 10.0.0.2
+
+Router1> enable
+Router1# configure terminal
+Router1(config)# interface fastethernet0/0
+Router1(config-if)# ip address 192.168.2.1 255.255.255.0
+Router1(config-if)# no shutdown
+Router1(config)# interface serial0/0/0
+Router1(config-if)# ip address 10.0.0.2 255.255.255.252
+Router1(config-if)# no shutdown
+Router1(config)# ip route 192.168.1.0 255.255.255.0 10.0.0.1
+      </pre>
+      <button class="copy-btn" onclick="copyToClipboard('cli2')">Copy CLI</button>
+
+      <h3>Uji Koneksi:</h3>
+      <p>Lakukan ping dari PC1 ke PC2. Jika konfigurasi benar, kedua PC akan bisa berkomunikasi meskipun berada di jaringan berbeda.</p>
+
+      <h3>Kesimpulan:</h3>
+      <p>Routing statis memberi kendali penuh kepada administrator, namun kurang fleksibel jika topologi sering berubah. Konsep ini melatih logika penentuan jalur data dan menjadi dasar untuk memahami routing dinamis.</p>
+    </div>
+
+    <!-- MATERI 3: ROUTING OSPF -->
+    <div class="card fade">
+      <h2>3. Routing OSPF</h2>
+      <p><strong>Konsep:</strong> OSPF (Open Shortest Path First) adalah protokol routing dinamis yang menghitung rute otomatis berdasarkan jarak terpendek.</p>
+      <img src="4.png" alt="Topologi OSPF" class="topology">
+
+      <h3>Langkah-Langkah Konfigurasi:</h3>
+      <ol>
+        <li><strong>Persiapan perangkat:</strong> Gunakan minimal tiga router yang saling terhubung.</li>
+        <li><strong>Aktifkan OSPF:</strong> Tentukan area routing (biasanya area 0).</li>
+        <li><strong>Tambahkan jaringan ke OSPF:</strong> Gunakan perintah <code>network</code> untuk mendefinisikan interface mana yang ikut dalam OSPF.</li>
+      </ol>
+
+      <pre id="cli3">
+Router(config)# router ospf 1
+Router(config-router)# network 192.168.1.0 0.0.0.255 area 0
+Router(config-router)# network 10.0.0.0 0.0.0.255 area 0
+Router(config-router)# exit
+      </pre>
+      <button class="copy-btn" onclick="copyToClipboard('cli3')">Copy CLI</button>
+
+      <h3>Kesimpulan:</h3>
+      <p>Dengan OSPF, setiap router dapat menyesuaikan rute otomatis saat ada perubahan jaringan. Ini sangat efisien untuk topologi besar, karena mengurangi konfigurasi manual dan mempercepat konvergensi jaringan.</p>
+    </div>
+
+    <!-- MATERI 4: VLAN -->
+    <div class="card fade">
+      <h2>4. VLAN (Virtual Local Area Network)</h2>
+      <p><strong>Konsep:</strong> VLAN digunakan untuk memisahkan jaringan logis dalam satu switch fisik, agar lalu lintas data lebih efisien dan aman.</p>
+      <img src="2.png" alt="Topologi VLAN" class="topology">
+
+      <h3>Langkah-Langkah Konfigurasi:</h3>
+      <ol>
+        <li><strong>Buat VLAN baru:</strong> Tentukan ID dan nama VLAN sesuai kebutuhan.</li>
+        <li><strong>Tetapkan port ke VLAN:</strong> Gunakan mode access agar port hanya terhubung ke satu VLAN.</li>
+        <li><strong>Uji koneksi:</strong> Pastikan perangkat dalam VLAN yang sama dapat saling berkomunikasi, sementara VLAN berbeda tidak.</li>
+      </ol>
+
+      <pre id="cli4">
+Switch> enable
+Switch# configure terminal
+Switch(config)# vlan 10
+Switch(config-vlan)# name STAFF
+Switch(config)# interface fastethernet0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 10
+Switch(config-if)# exit
+Switch(config)# interface fastethernet0/2
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 20
+      </pre>
+      <button class="copy-btn" onclick="copyToClipboard('cli4')">Copy CLI</button>
+
+      <h3>Kesimpulan:</h3>
+      <p>VLAN memungkinkan pemisahan lalu lintas antar departemen atau fungsi dalam jaringan yang sama tanpa menambah perangkat baru. Ini meningkatkan efisiensi, keamanan, dan pengelolaan jaringan perusahaan modern.</p>
+    </div>
+
+  </div>
+
+  <script>
+    function copyToClipboard(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text);
+      alert('CLI berhasil disalin!');
+    }
+
+    const cards = document.querySelectorAll('.card');
+    window.addEventListener('scroll', () => {
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 100) {
+          card.classList.add('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
